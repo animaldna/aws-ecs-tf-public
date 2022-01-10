@@ -79,3 +79,11 @@ variable "vpc_cidr" {
     prod  = "10.20.0.0/16"
   }
 }
+
+variable "max_capacity" {
+  type = number
+}
+
+variable "min_capacity" {
+  type = number
+}

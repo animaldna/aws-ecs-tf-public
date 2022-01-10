@@ -8,7 +8,7 @@ resource "aws_cloudwatch_log_group" "container_logs" {
 }
 
 resource "aws_ecs_task_definition" "task-template" {
-  family = "${var.resource_prefix}-task-template"
+  family     = "${var.resource_prefix}-task-template"
   depends_on = [aws_cloudwatch_log_group.container_logs]
   container_definitions = jsonencode([
     {

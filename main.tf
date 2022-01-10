@@ -87,3 +87,12 @@ module "ecs" {
   image            = var.image
   region           = var.aws_region
 }
+
+module "ecs_autoscaling" {
+  source          = "./modules/ecs_autoscaling"
+  resource_prefix = local.resource_prefix
+  max_capacity    = var.max_capacity
+  min_capacity    = var.min_capacity
+  env             = var.env
+  depends_on = [module.ecs]
+}

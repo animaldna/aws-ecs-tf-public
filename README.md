@@ -51,7 +51,8 @@ terraform apply|plan -var-file="dev.tfvars"
 
 ## TODOs
 - [x] Container logging (ecs)
-- [ ] Auto scaling
+- [x] Auto scaling
+- [ ] Load testing
 - [ ] Dynamic ports (ecs)
 - [ ] Dynamic ACM cert
 - [ ] Add safe IPs to SGs for SSH access (sgs)
