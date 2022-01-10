@@ -1,7 +1,7 @@
 # Catalog API Infrastructure (Protected)
 This is a Terraform project to manage the infrastructure for a [demo catalog API.](https://github.com/animaldna/catalog-api)
 
-This version runs ECS from public subnets and uses an ALB + security groups to control access. It's less secure, but cheaper than setting up private subnets and running a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) (or NAT instance).
+This version runs ECS from public subnets and relies on an ALB + security groups to control access. It's less secure, but cheaper than running a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) (or NAT instance).
 
 The private version is [available in this repo.]() Be aware of [NAT gateway pricing](https://aws.amazon.com/vpc/pricing/) before launching.
 
