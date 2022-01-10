@@ -12,7 +12,11 @@ This infrastructure isn't fully managed by Terraform. Managing backend config re
 
 The Route 53 hosted zone was also created outside of Terraform. Most domains are already registered and setup when a new service is created, as was the case with mine.
 
+<<<<<<< HEAD
 **This project is meant to manage infrastructure only, NOT deployment.** The `image` variable is technically meant to be a placeholder, although you could use whatever you want. A deploy script handles task definition updates outside of Terraform. 
+=======
+**This project is meant to manage infrastructure only, NOT deployment.** The `image` variable is technically meant to be a placeholder, although you could use whatever you want. A deploy script handles task definition updates outside of Terraform. [You can read more about this setup here.]()
+>>>>>>> 0a543e1 (initial commit. working infrastructure. still working through TODOs.)
 
 ## Requirements
 - Terraform v1.1.2
@@ -25,7 +29,11 @@ The Route 53 hosted zone was also created outside of Terraform. Most domains are
 ## Usage
 Create a backend config file:
 ```
+<<<<<<< HEAD
 bucket         = "your-state-bucket
+=======
+bucket         = "your-state-bucket"
+>>>>>>> 0a543e1 (initial commit. working infrastructure. still working through TODOs.)
 key            = "your-key-here/terraform.tfstate"
 region         = "your-aws-region"
 encrypt        = true||false
