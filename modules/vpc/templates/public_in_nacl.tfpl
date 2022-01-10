@@ -1,0 +1,36 @@
+public_inbound = [
+  {
+    rule_number = 100
+    rule_action = "allow"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_block  = "0.0.0.0/0"
+  },
+  {
+    rule_number = 101
+    rule_action = "allow"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_block  = "0.0.0.0/0"
+  },
+  {
+    rule_number = 102
+    rule_action = "allow"
+    from_port = 1024
+    to_port = 65535
+    protocol = "tcp"
+    cidr_block = "0.0.0.0/0"
+  }
+  %{ for ip, i in safe_ips ~}
+    {
+        rule_number = 103 + i
+        rule_action = "allow"
+        from_port = 22
+        to_port = 22
+        protocol = "tcp"
+        cidr_block = ip
+    },
+  %{ endfor ~}
+]
