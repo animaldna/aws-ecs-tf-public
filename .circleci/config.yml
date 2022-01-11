@@ -1,0 +1,50 @@
+version: 2.1
+
+workflows:
+  deploy_infrastructure:
+    jobs:
+      - init_and_plan:
+          context:
+            - personal_testing
+      - hold_for_approval:
+          type: approval
+          requires:
+            - init_and_plan
+      - apply:
+          context:
+            - personal_testing
+          requires:
+            - hold_for_approval
+
+
+
+jobs:
+  init_and_plan:
+    working_directory: /tmp/terraform-infra
+    docker:
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+    steps:
+      - checkout
+      - run:
+          name: terraform init & plan
+          command: |
+            terraform init -input=false -backend-config="dev.s3.tfbackend"
+            terraform plan -out="tf-plan-out" -var-file="dev.tfvars"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  apply:
+    docker:
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: terraform
+          command: |
+            terraform apply -auto-approve -var-file="dev.tfvars"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
