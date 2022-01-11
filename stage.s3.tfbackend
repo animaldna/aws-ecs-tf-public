@@ -1,0 +1,5 @@
+bucket         = "catalog-api-tf-public-state"
+key            = "stage/terraform.tfstate"
+region         = "us-east-2"
+encrypt        = true
+dynamodb_table = "microservice-tfstate-lock"

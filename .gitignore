@@ -1,5 +1,5 @@
 
 /.terraform
 .DS_Store
-*.tfbackend
+
 */**/.terraform
