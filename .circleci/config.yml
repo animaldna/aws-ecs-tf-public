@@ -64,7 +64,7 @@ jobs:
       - run:
           name: terraform init & plan
           command: |
-            terraform init -input=false -backend-config="/backends/<< parameters.env >>.s3.tfbackend"
+            terraform init -input=false -backend-config="backends/<< parameters.env >>.s3.tfbackend"
             terraform plan -out="tf-plan-out" \
             -var="env=<< parameters.env >>" \
             -var="aws_region=${AWS_REGION}" \
