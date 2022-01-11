@@ -1,19 +1,21 @@
 version: 2.1
 production_only: &prod_only
   filters:
-    branch:
+    branches:
       only: master
 
 workflows:
-  default:
+  deploy_infrastructure:
     jobs:
       - init_and_plan:
           name: stage_init_plan
+          env: stage
           context:
             - org_global
             - stage_env
       - apply:
           name: stage_apply
+          env: stage
           context:
             - org_global
             - stage_env
@@ -25,6 +27,7 @@ workflows:
       - init_and_plan:
           <<: *prod_only
           name: prod_init_plan
+          env: prod
           context:
             - org_global
             - prod_env
@@ -38,6 +41,7 @@ workflows:
       - apply:
           <<: *prod_only
           name: prod_apply
+          env: prod
           context:
             - org_global
             - prod_env
@@ -51,6 +55,7 @@ jobs:
     parameters:
       env:
         type: string
+        default: dev
     working_directory: /tmp/terraform-infra
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -61,7 +66,7 @@ jobs:
           command: |
             terraform init -input=false -backend-config="/backends/<< parameters.env >>.s3.tfbackend"
             terraform plan -out="tf-plan-out" \
-            -var="env=<< parameter.env >>" \
+            -var="env=<< parameters.env >>" \
             -var="aws_region=${AWS_REGION}" \
             -var="aws_account_id=${AWS_ACCOUNT_ID}" \
             -var="safe_ips=${SAFE_IPS}" \
@@ -72,6 +77,10 @@ jobs:
           paths:
             - .
   apply:
+    parameters:
+      env:
+        type: string
+        default: dev
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
@@ -81,7 +90,7 @@ jobs:
           name: terraform
           command: |
             terraform apply -auto-approve \
-            -var="env=<< parameter.env >>" \
+            -var="env=<< parameters.env >>" \
             -var="aws_region=${AWS_REGION}" \
             -var="aws_account_id=${AWS_ACCOUNT_ID}" \
             -var="safe_ips=${SAFE_IPS}" \

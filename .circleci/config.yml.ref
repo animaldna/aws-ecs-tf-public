@@ -8,10 +8,24 @@ region
 domain
 safe_ips -- CONTEXT/ENV
 project_name
-aws_account_id -- CONTET/ENV
+aws_account_id -- CONTEXT/ENV
 image
 max_capacity
 min_capacity
+
+contexts
+(dev, stage, env)
+safe_ips
+aws_account_id
+region
+
+shared context...
+
+environment variables
+region
+domain
+project_name
+image
 
 
 workflows:
@@ -29,6 +43,8 @@ workflows:
             - personal_testing
           requires:
             - hold_for_approval
+
+
 
 
 
