@@ -12,13 +12,13 @@ workflows:
           env: stage
           context:
             - org_global
-            - stage_env
+            - catalog_api_dev
       - apply:
           name: stage_apply
           env: stage
           context:
             - org_global
-            - stage_env
+            - catalog_api_dev
       - hold_for_stage_review:
           <<: *prod_only
           type: approval
@@ -30,7 +30,7 @@ workflows:
           env: prod
           context:
             - org_global
-            - prod_env
+            - catalog_api_prod
           requires:
             - hold_for_stage_review
       - hold_for_prod_review:
@@ -44,7 +44,7 @@ workflows:
           env: prod
           context:
             - org_global
-            - prod_env
+            - catalog_api_prod
           requires:
             - hold_for_prod_review
         
