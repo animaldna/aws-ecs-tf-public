@@ -58,7 +58,8 @@ terraform apply|plan -var-file="dev.tfvars"
 - [ ] Add safe IPs to SGs for SSH access (sgs)
 - [ ] Restrict ECS roles (iam)
 - [ ] Get NACL template working (vpc)
-- [ ] Sort out separation of environments and state management
+- [x] Sort out separation of environments and state management
+- [ ] Conditional CircleCI jobs - don't need stage env for small changes
 - [ ] Deploy script
 
 Articles of note: 

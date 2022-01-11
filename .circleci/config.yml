@@ -1,59 +1,83 @@
 version: 2.1
-production_only: &prod_only
+untagged_prod: &untagged_prod
   filters:
     branches:
       only: master
+    tags:
+      ignore: /^v.*/
+  env: prod
+  context:
+    - org_global
+    - catalog_api_prod
+tagged_prod: &tagged_prod
+  filters:
+    branches:
+      only: master
+    tags:
+      only: /^v.*/
+stage_env_context: &stage_env_context
+  env: stage
+  context:
+    - org_global
+    - catalog_api_dev
+prod_env_context: &prod_env_context
+  env: prod
+  context:
+    - org_global
+    - catalog_api_prod
 
 workflows:
-  deploy_infrastructure:
+  untagged_builds:
     jobs:
       - init_and_plan:
-          <<: *prod_only
-          name: stage_init_plan
-          env: stage
-          context:
-            - org_global
-            - catalog_api_dev
+          <<: *untagged_prod
+          name: prod_init_plan  
       - apply:
-          <<: *prod_only
+          <<: *untagged_prod
+          name: prod_apply
+          requires:
+            - prod_init_plan
+  tagged_builds:
+    jobs:
+      - init_and_plan:
+          name: stage_init_plan
+          <<: *tagged_prod
+          <<: *stage_env_context
+      - apply:
           name: stage_apply
-          env: stage
-          context:
-            - org_global
-            - catalog_api_dev
+          <<: *tagged_prod
+          <<: *stage_env_context
           requires:
             - stage_init_plan
       - hold_for_stage_review:
-          <<: *prod_only
+          <<: *tagged_prod
           type: approval
           requires:
             - stage_apply
       - init_and_plan:
-          <<: *prod_only
+          <<: *tagged_prod
+          <<: *prod_env_context
           name: prod_init_plan
-          env: prod
-          context:
-            - org_global
-            - catalog_api_prod
           requires:
             - hold_for_stage_review
       - hold_for_prod_review:
-          <<: *prod_only
+          <<: *tagged_prod
           type: approval
           requires:
             - prod_init_plan
       - apply:
-          <<: *prod_only
+          <<: *tagged_prod
+          <<: *prod_env_context
           name: prod_apply
-          env: prod
-          context:
-            - org_global
-            - catalog_api_prod
+          requires:
+            - hold_for_prod_review
+      - destroy:
+          <<: *tagged_prod
+          <<: *stage_env_context
+          name: destroy_stage
           requires:
             - hold_for_prod_review
         
-
-
 jobs:
   init_and_plan:
     parameters:
@@ -102,3 +126,22 @@ jobs:
           root: .
           paths:
             - .
+  destroy:
+    parameters:
+      env:
+        type: string
+        default: dev
+    docker:
+      - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: terraform
+          command: |
+            terraform destroy -auto-approve \
+            -var="env=<< parameters.env >>" \
+            -var="aws_region=${AWS_REGION}" \
+            -var="aws_account_id=${AWS_ACCOUNT_ID}" \
+            -var="safe_ips=${SAFE_IPS}" \
+            -var="domain_name=${DOMAIN_NAME}"

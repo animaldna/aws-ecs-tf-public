@@ -3,7 +3,7 @@ output "resource_prefix" {
 }
 
 output "service_url" {
-  value = "${local.resource_prefix}.${var.domain_name}"
+  value = var.env == "prod" ? "${local.project_name}.${var.domain_name}" : "${local.resource_prefix}.${var.domain_name}"
 }
 
 output "alb_dns_hostname" {
