@@ -19,6 +19,8 @@ workflows:
           context:
             - org_global
             - catalog_api_dev
+          requires:
+            - stage_init_plan
       - hold_for_stage_review:
           <<: *prod_only
           type: approval
