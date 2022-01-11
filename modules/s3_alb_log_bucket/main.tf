@@ -13,6 +13,6 @@ data "template_file" "alb_log_bucket_policy" {
 resource "aws_s3_bucket" "alb_log_bucket" {
   bucket        = "${var.resource_prefix}-alb-logs"
   acl           = "log-delivery-write"
-  force_destroy = length(regexall("(dev)", var.env)) == 1 ? true : false
+  force_destroy = var.env == "prod" ? false : true
   policy        = data.template_file.alb_log_bucket_policy.rendered
 }

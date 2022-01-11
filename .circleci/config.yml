@@ -8,12 +8,14 @@ workflows:
   deploy_infrastructure:
     jobs:
       - init_and_plan:
+          <<: *prod_only
           name: stage_init_plan
           env: stage
           context:
             - org_global
             - catalog_api_dev
       - apply:
+          <<: *prod_only
           name: stage_apply
           env: stage
           context:
