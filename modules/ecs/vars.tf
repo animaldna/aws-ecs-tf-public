@@ -18,10 +18,6 @@ variable "public_subnets" {
   type = list(string)
 }
 
-variable "image" {
-  type = string
-}
-
 variable "repo_name" {
   type        = string
   description = "Repo to pull image from"
