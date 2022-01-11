@@ -43,6 +43,7 @@ variable "safe_ips" {
   type        = list(string)
   description = "IP ranges to whitelist for SSH access"
   default     = []
+  sensitive = true
 }
 
 
@@ -55,12 +56,6 @@ variable "project_name" {
   }
 }
 
-variable "image" {
-  type        = string
-  description = "Image to use in container definition (template)"
-  default     = ""
-}
-
 variable "aws_account_id" {
   type        = number
   description = "AWS account id"
@@ -68,6 +63,7 @@ variable "aws_account_id" {
     condition     = length(regexall("([0-9])+", var.aws_account_id)) > 0
     error_message = "AWS account ID must be a 12 digit number."
   }
+  sensitive = true
 }
 
 variable "vpc_cidr" {

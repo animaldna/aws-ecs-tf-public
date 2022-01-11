@@ -38,6 +38,8 @@ module "data" {
 
 locals {
   resource_prefix = "${var.env}-${random_string.env_id.result}-${var.project_name}"
+  max_capacity = var.env == "prod" ? 4 : 2
+  min_capacity = var.env == "prod" ? 2 : 1
 }
 
 module "vpc" {
@@ -67,7 +69,7 @@ module "service_alb" {
 
 resource "aws_route53_record" "service_domain" {
   zone_id = module.data.dns_zone
-  name    = local.resource_prefix
+  name    = var.env == "prod" ? var.project_name : local.resource_prefix
   type    = "A"
 
   alias {
@@ -84,15 +86,14 @@ module "ecs" {
   env              = var.env
   alb_target_group = module.service_alb.target_group_arn
   public_subnets   = module.vpc.public_subnets
-  image            = var.image
   region           = var.aws_region
 }
 
 module "ecs_autoscaling" {
   source          = "./modules/ecs_autoscaling"
   resource_prefix = local.resource_prefix
-  max_capacity    = var.max_capacity
-  min_capacity    = var.min_capacity
+  max_capacity    = local.max_capacity
+  min_capacity    = local.min_capacity
   env             = var.env
   depends_on = [module.ecs]
 }

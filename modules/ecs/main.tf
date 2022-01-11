@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "task-template" {
   container_definitions = jsonencode([
     {
       name      = "${var.resource_prefix}-container"
-      image     = var.image
+      image     = "animaldna/sleep:latest"
       essential = true
       portMappings = [
         {

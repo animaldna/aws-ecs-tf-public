@@ -1,25 +1,56 @@
 version: 2.1
+production_only: &prod_only
+  filters:
+    branch:
+      only: master
 
 workflows:
-  deploy_infrastructure:
+  default:
     jobs:
       - init_and_plan:
+          name: stage_init_plan
           context:
-            - personal_testing
-      - hold_for_approval:
+            - org_global
+            - stage_env
+      - apply:
+          name: stage_apply
+          context:
+            - org_global
+            - stage_env
+      - hold_for_stage_review:
+          <<: *prod_only
           type: approval
           requires:
-            - init_and_plan
-      - apply:
+            - stage_apply
+      - init_and_plan:
+          <<: *prod_only
+          name: prod_init_plan
           context:
-            - personal_testing
+            - org_global
+            - prod_env
           requires:
-            - hold_for_approval
-
+            - hold_for_stage_review
+      - hold_for_prod_review:
+          <<: *prod_only
+          type: approval
+          requires:
+            - prod_init_plan
+      - apply:
+          <<: *prod_only
+          name: prod_apply
+          context:
+            - org_global
+            - prod_env
+          requires:
+            - hold_for_prod_review
+        
 
 
 jobs:
   init_and_plan:
+    parameters:
+      env:
+        type: string
     working_directory: /tmp/terraform-infra
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
@@ -28,8 +59,14 @@ jobs:
       - run:
           name: terraform init & plan
           command: |
-            terraform init -input=false -backend-config="dev.s3.tfbackend"
-            terraform plan -out="tf-plan-out" -var-file="dev.tfvars"
+            terraform init -input=false -backend-config="/backends/<< parameters.env >>.s3.tfbackend"
+            terraform plan -out="tf-plan-out" \
+            -var="env=<< parameter.env >>" \
+            -var="aws_region=${AWS_REGION}" \
+            -var="aws_account_id=${AWS_ACCOUNT_ID}" \
+            -var="safe_ips=${SAFE_IPS}" \
+            -var="domain_name=${DOMAIN_NAME}" \
+            -var="project_name=${CIRCLE_PROJECT_REPONAME}"
       - persist_to_workspace:
           root: .
           paths:
@@ -43,7 +80,13 @@ jobs:
       - run:
           name: terraform
           command: |
-            terraform apply -auto-approve -var-file="dev.tfvars"
+            terraform apply -auto-approve \
+            -var="env=<< parameter.env >>" \
+            -var="aws_region=${AWS_REGION}" \
+            -var="aws_account_id=${AWS_ACCOUNT_ID}" \
+            -var="safe_ips=${SAFE_IPS}" \
+            -var="domain_name=${DOMAIN_NAME}" \
+            -var="project_name=${CIRCLE_PROJECT_REPONAME}"
       - persist_to_workspace:
           root: .
           paths:
