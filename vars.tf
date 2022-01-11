@@ -47,15 +47,6 @@ variable "safe_ips" {
 }
 
 
-variable "project_name" {
-  type        = string
-  description = "Project name"
-  validation {
-    condition     = length(regexall("([A-za-z0-9-])+", var.project_name)) > 0
-    error_message = "Project name should be alphanumeric and optionally include hyphens."
-  }
-}
-
 variable "aws_account_id" {
   type        = number
   description = "AWS account id"

@@ -18,7 +18,7 @@ provider "aws" {
     tags = {
       env     = var.env
       env_id  = random_string.env_id.result
-      project = var.project_name
+      project = local.project_name
     }
   }
 }
@@ -37,7 +37,8 @@ module "data" {
 }
 
 locals {
-  resource_prefix = "${var.env}-${random_string.env_id.result}-${var.project_name}"
+  project_name = "catalog-api"
+  resource_prefix = "${var.env}-${random_string.env_id.result}-${local.project_name}"
   max_capacity = var.env == "prod" ? 4 : 2
   min_capacity = var.env == "prod" ? 2 : 1
 }
@@ -69,7 +70,7 @@ module "service_alb" {
 
 resource "aws_route53_record" "service_domain" {
   zone_id = module.data.dns_zone
-  name    = var.env == "prod" ? var.project_name : local.resource_prefix
+  name    = var.env == "prod" ? local.project_name : local.resource_prefix
   type    = "A"
 
   alias {
