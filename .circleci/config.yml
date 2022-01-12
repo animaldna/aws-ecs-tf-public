@@ -44,7 +44,7 @@ workflows:
   deploy_untagged:
     when:
       and:
-        - equal: [cci-update-2, << pipeline.git.branch >>]
+        - equal: [master, << pipeline.git.branch >>]
     jobs:
       - init_and_plan:
           <<: *prod_env
