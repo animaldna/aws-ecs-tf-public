@@ -3,7 +3,7 @@ This is a Terraform project to manage the infrastructure for a [demo catalog API
 
 This version runs ECS from public subnets and relies on an ALB + security groups to control access. It's less secure, but cheaper than running a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) (or NAT instance).
 
-The private version is [available in this repo.]() Be aware of [NAT gateway pricing](https://aws.amazon.com/vpc/pricing/) before launching.
+The private version is [available in this repo ]()(coming soon.) Be aware of [NAT gateway pricing](https://aws.amazon.com/vpc/pricing/) before launching.
 
 ![Public ECS architecture](./catalog_api_infra_public.jpg)
 
@@ -12,7 +12,10 @@ This infrastructure isn't fully managed by Terraform. Managing backend config re
 
 The Route 53 hosted zone was also created outside of Terraform. Most domains are already registered and setup when a new service is created, as was the case with mine.
 
-**This project is meant to manage infrastructure only, NOT deployment.** The `image` variable is technically meant to be a placeholder, although you could use whatever you want. A deploy script handles task definition updates outside of Terraform. [You can read more about this setup here.]()
+**This project is meant to manage infrastructure only, NOT deployment.** The `image` variable is technically meant to be a placeholder, although you could use whatever you want. A deploy script handles task definition updates outside of Terraform. [You can read more about this setup here ]()(coming soon.)
+
+## CI/CD Pipeline
+TBD
 
 ## Requirements
 - Terraform v1.1.2
@@ -32,7 +35,7 @@ encrypt        = true||false
 dynamodb_table = "your-state-lock-table-name"
 ```
 
-Initialize Terraform with your backend config and variables. I use a saved .tfvars file when working locally and a dynamically generated file when running from a CI pipeline.
+Initialize Terraform with your backend config and variables. I use .tfvars files when working locally and var flags when running from a CI pipeline.
 
 ```sh
 terraform init -backend-config="dev.s3.tfbackend" -var-file="dev.tfvars"
@@ -50,17 +53,25 @@ terraform apply|plan -var-file="dev.tfvars"
 ```
 
 ## TODOs
+### CircleCI
+- [x] Conditional CircleCI jobs - don't need stage env for small changes
+- [ ] Pull last stable image to use in task def for stage builds
+- [ ] CircleCI job for dev builds?
+- [ ] Slack notifications for build fail/success
+- [ ] Slack approvals
+- [ ] TF plans as artifacts?
+- [ ] Additional TF testing needed?
+- [ ] Add CI workflow diagram
+### Terraform
 - [x] Container logging (ecs)
 - [x] Auto scaling
+- [x] Sort out separation of environments and state management
 - [ ] Load testing
 - [ ] Dynamic ports (ecs)
 - [ ] Dynamic ACM cert
 - [ ] Add safe IPs to SGs for SSH access (sgs)
 - [ ] Restrict ECS roles (iam)
 - [ ] Get NACL template working (vpc)
-- [x] Sort out separation of environments and state management
-- [ ] Conditional CircleCI jobs - don't need stage env for small changes
-- [ ] Deploy script
 
 Articles of note: 
 - [Terraform Dynamic Subnets](https://medium.com/prodopsio/terraform-aws-dynamic-subnets-455619dd1977)
