@@ -66,3 +66,9 @@ variable "vpc_cidr" {
     prod  = "10.20.0.0/16"
   }
 }
+
+variable "default_image" {
+  type = string
+  description = "default container definition image"
+  default = "animaldna/sleep:latest"
+}

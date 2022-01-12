@@ -1,9 +1,11 @@
+[![CircleCI](https://circleci.com/gh/animaldna/catalog-api-tf-public/tree/master.svg?style=shield)](https://circleci.com/gh/animaldna/catalog-api-tf-public/tree/master)
+
 # Catalog API Infrastructure (Protected)
 This is a Terraform project to manage the infrastructure for a [demo catalog API.](https://github.com/animaldna/catalog-api)
 
 This version runs ECS from public subnets and relies on an ALB + security groups to control access. It's less secure, but cheaper than running a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) (or NAT instance).
 
-The private version is [available in this repo ]()(coming soon.) Be aware of [NAT gateway pricing](https://aws.amazon.com/vpc/pricing/) before launching.
+The private version is [available in this repo ]()(coming soon).
 
 ![Public ECS architecture](./catalog_api_infra_public.jpg)
 
@@ -12,7 +14,10 @@ This infrastructure isn't fully managed by Terraform. Managing backend config re
 
 The Route 53 hosted zone was also created outside of Terraform. Most domains are already registered and setup when a new service is created, as was the case with mine.
 
-**This project is meant to manage infrastructure only, NOT deployment.** The `image` variable is technically meant to be a placeholder, although you could use whatever you want. A deploy script handles task definition updates outside of Terraform. [You can read more about this setup here ]()(coming soon.)
+**This project is meant to manage infrastructure only, NOT deployment.** 
+
+The `image` variable is technically meant to be a placeholder, as a deploy script handles task definition updates outside of Terraform. [You can read more about this setup here ]()(coming soon). The default right now is a public sleep container. Pass something meaningful when launching, otherwise you'll get 503 errors from the load balancer.
+
 
 ## CI/CD Pipeline
 TBD
@@ -52,11 +57,18 @@ Apply (or plan if you'd like to review first):
 terraform apply|plan -var-file="dev.tfvars"
 ```
 
+Destroy resources:
+```sh
+terraform destroy -var-file"dev.tfvars"
+```
+
+
 ## TODOs
 ### CircleCI
 - [x] Conditional CircleCI jobs - don't need stage env for small changes
 - [ ] Pull last stable image to use in task def for stage builds
-- [ ] CircleCI job for dev builds?
+- [ ] Optional job for stage branch only
+- [ ] Optional job for dev branch only
 - [ ] Slack notifications for build fail/success
 - [ ] Slack approvals
 - [ ] TF plans as artifacts?

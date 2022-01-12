@@ -98,7 +98,8 @@ jobs:
             -var="aws_region=${AWS_REGION}" \
             -var="aws_account_id=${AWS_ACCOUNT_ID}" \
             -var="safe_ips=${SAFE_IPS}" \
-            -var="domain_name=${DOMAIN_NAME}"
+            -var="domain_name=${DOMAIN_NAME}" \
+            -var="default_image=animaldna/sleep:latest"
       - persist_to_workspace:
           root: .
           paths:
@@ -121,7 +122,8 @@ jobs:
             -var="aws_region=${AWS_REGION}" \
             -var="aws_account_id=${AWS_ACCOUNT_ID}" \
             -var="safe_ips=${SAFE_IPS}" \
-            -var="domain_name=${DOMAIN_NAME}"
+            -var="domain_name=${DOMAIN_NAME}" \
+            -var="default_image=animaldna/sleep:latest"
       - persist_to_workspace:
           root: .
           paths:
@@ -144,4 +146,5 @@ jobs:
             -var="aws_region=${AWS_REGION}" \
             -var="aws_account_id=${AWS_ACCOUNT_ID}" \
             -var="safe_ips=${SAFE_IPS}" \
-            -var="domain_name=${DOMAIN_NAME}"
+            -var="domain_name=${DOMAIN_NAME}" \
+            -var="default_image=animaldna/sleep:latest"

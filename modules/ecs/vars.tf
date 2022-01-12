@@ -29,3 +29,9 @@ variable "region" {
   description = "Current AWS region"
   default     = "us-east-1"
 }
+
+variable "default_image" {
+  type = string
+  description = "default container definition image"
+  default = "animaldna/sleep:latest"
+}

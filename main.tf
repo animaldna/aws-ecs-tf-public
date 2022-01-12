@@ -88,6 +88,7 @@ module "ecs" {
   alb_target_group = module.service_alb.target_group_arn
   public_subnets   = module.vpc.public_subnets
   region           = var.aws_region
+  default_image = var.default_image
 }
 
 module "ecs_autoscaling" {
