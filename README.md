@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/animaldna/catalog-api-tf-public/tree/master.svg?style=shield)](https://circleci.com/gh/animaldna/catalog-api-tf-public/tree/master)
+[![CircleCI](https://circleci.com/gh/animaldna/catalog-api-tf-public/tree/master.svg?style=shield&circle-token=be30bbdc1c9a1555367c5736e490eac00aa7f37e)](https://circleci.com/gh/animaldna/catalog-api-tf-public/tree/master)
 
 # Catalog API Infrastructure (Protected)
 This is a Terraform project to manage the infrastructure for a [demo catalog API.](https://github.com/animaldna/catalog-api)
