@@ -66,6 +66,10 @@ terraform destroy -var-file"dev.tfvars"
 ## TODOs
 ### CircleCI
 - [x] Conditional CircleCI jobs - don't need stage env for small changes
+- [ ] Fix issue with using dev context
+- [ ] Maybe replace destroy checkout with more specific persistence
+- [ ] Need to persist workspace after apply?
+- [ ] State lock issues when a workflow is canceled!
 - [ ] Pull last stable image to use in task def for stage builds
 - [ ] Optional job for stage branch only
 - [ ] Optional job for dev branch only

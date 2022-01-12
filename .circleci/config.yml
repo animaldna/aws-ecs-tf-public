@@ -1,5 +1,6 @@
 version: 2.1
 
+## ALIASES ##
 tagged_builds: &tagged_builds
   filters:
     tags:
@@ -15,31 +16,50 @@ stage_env: &stage_env
   env: stage
   context:
     - org_global
-    - catalog_api_stage
+    - catalog_api_prod
 
+## COMMANDS ##
+commands:
+  tf_init_plan:
+    description: Initialize Terraform and plan with appropriate backend, vars, and mode
+    parameters:
+      env:
+        type: string
+        default: dev
+      mode:
+        type: string
+    steps:
+      - run:
+          command: |      
+            terraform init -input=false -backend-config="backends/<< parameters.env >>.s3.tfbackend"
+            terraform << parameters.mode >> -out="tf-plan-out" \
+            -var="env=<< parameters.env >>" \
+            -var="aws_region=${AWS_REGION}" \
+            -var="aws_account_id=${AWS_ACCOUNT_ID}" \
+            -var="safe_ips=${SAFE_IPS}" \
+            -var="domain_name=${DOMAIN_NAME}" \
+            -var="default_image=animaldna/sleep:latest"
 
 workflows:
   deploy_untagged:
     when:
       and:
-        - equal: [cci-update, << pipeline.git.branch >>]
+        - equal: [cci-update-2, << pipeline.git.branch >>]
     jobs:
       - init_and_plan:
           <<: *prod_env
-          # name: prod_init_plan  
+          mode: plan
       - apply:
           <<: *prod_env
-          # name: prod_apply
           requires:
-            # - prod_init_plan
             - init_and_plan
-
   deploy_tagged:
     jobs:
       - init_and_plan:
           name: stage_init_plan
           <<: *tagged_builds
           <<: *stage_env
+          mode: plan
       - apply:
           name: stage_apply
           <<: *tagged_builds
@@ -52,9 +72,10 @@ workflows:
           requires:
             - stage_apply
       - init_and_plan:
+          name: prod_init_plan
           <<: *tagged_builds
           <<: *prod_env
-          name: prod_init_plan
+          mode: plan
           requires:
             - hold_for_stage_review
       - hold_for_prod_review:
@@ -63,15 +84,16 @@ workflows:
           requires:
             - prod_init_plan
       - apply:
+          name: prod_apply
           <<: *tagged_builds
           <<: *prod_env
-          name: prod_apply
           requires:
             - hold_for_prod_review
       - destroy:
+          name: destroy_stage
           <<: *tagged_builds
           <<: *stage_env
-          name: destroy_stage
+          mode: plan -destroy
           requires:
             - hold_for_prod_review
         
@@ -81,22 +103,16 @@ jobs:
       env:
         type: string
         default: dev
+      mode:
+        type: string
     working_directory: /tmp/terraform-infra
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
       - checkout
-      - run:
-          name: terraform init & plan
-          command: |
-            terraform init -input=false -backend-config="backends/<< parameters.env >>.s3.tfbackend"
-            terraform plan -out="tf-plan-out" \
-            -var="env=<< parameters.env >>" \
-            -var="aws_region=${AWS_REGION}" \
-            -var="aws_account_id=${AWS_ACCOUNT_ID}" \
-            -var="safe_ips=${SAFE_IPS}" \
-            -var="domain_name=${DOMAIN_NAME}" \
-            -var="default_image=animaldna/sleep:latest"
+      - tf_init_plan:
+          env: << parameters.env >>
+          mode: << parameters.mode >>
       - persist_to_workspace:
           root: .
           paths:
@@ -129,14 +145,17 @@ jobs:
     parameters:
       env:
         type: string
-        default: dev
+      mode:
+        type: string
     docker:
       - image: docker.mirror.hashicorp.services/hashicorp/terraform:light
     steps:
-      - attach_workspace:
-          at: .
+      - checkout
+      - tf_init_plan:
+          env: << parameters.env >>
+          mode: << parameters.mode >>
       - run:
-          name: terraform
+          name: destroy
           command: |
             terraform destroy -auto-approve \
             -var="env=<< parameters.env >>" \
