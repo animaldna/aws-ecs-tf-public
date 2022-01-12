@@ -1,20 +1,20 @@
 version: 2.1
 untagged_prod: &untagged_prod
   filters:
-    branches:
-      only: master
     tags:
       ignore: /^v.*/
+    branches:
+      only: master
   env: prod
   context:
     - org_global
     - catalog_api_prod
 tagged_prod: &tagged_prod
   filters:
-    branches:
-      only: master
     tags:
       only: /^v.*/
+    branches:
+      only: master
 stage_env_context: &stage_env_context
   env: stage
   context:

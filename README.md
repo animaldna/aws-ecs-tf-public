@@ -5,7 +5,7 @@ This is a Terraform project to manage the infrastructure for a [demo catalog API
 
 This version runs ECS from public subnets and relies on an ALB + security groups to control access. It's less secure, but cheaper than running a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) (or NAT instance).
 
-The private version is [available in this repo ]()(coming soon).
+<!-- The private version is [available in this repo ]()(coming soon).-->
 
 ![Public ECS architecture](./catalog_api_infra_public.jpg)
 
@@ -16,7 +16,7 @@ The Route 53 hosted zone was also created outside of Terraform. Most domains are
 
 **This project is meant to manage infrastructure only, NOT deployment.** 
 
-The `image` variable is technically meant to be a placeholder, as a deploy script handles task definition updates outside of Terraform. [You can read more about this setup here ]()(coming soon). The default right now is a public sleep container. Pass something meaningful when launching, otherwise you'll get 503 errors from the load balancer.
+The `image` variable is technically meant to be a placeholder, as a deploy script handles task definition updates outside of Terraform. <!--[You can read more about this setup here ]()(coming soon).--> The default right now is a public sleep container. Pass something meaningful when launching, otherwise you'll get 503 errors from the load balancer.
 
 
 ## CI/CD Pipeline
