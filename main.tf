@@ -19,6 +19,7 @@ provider "aws" {
       env     = var.env
       env_id  = random_string.env_id.result
       project = local.project_name
+      whatever = "test"
     }
   }
 }
