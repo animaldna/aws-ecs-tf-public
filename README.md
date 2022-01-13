@@ -8,7 +8,7 @@ This version runs ECS from public subnets and relies on an ALB + security groups
 
 <!-- The private version is [available in this repo ]()(coming soon).-->
 
-![Public ECS architecture](./catalog_api_infra_public.jpg)
+![Public ECS architecture](./assets/catalog_api_infra_public.jpg)
 
 ## Additional Info
 This setup isn't *fully* managed by Terraform. Managing backend config resources (S3 + DynamoDB) in the same TF project proved problematic, so those were created manually and are passed to TF.
@@ -63,6 +63,8 @@ To destroy resources:
 terraform destroy -var-file"dev.tfvars"
 ```
 
+## Known Issues
+- Inconsistent plan errors on first apply (only on dev?). AWS provider issue, see [#19583](https://github.com/hashicorp/terraform-provider-aws/issues/19583). Current workaround to simply reapply.
 
 ## TODOs
 ### CircleCI
@@ -85,7 +87,7 @@ terraform destroy -var-file"dev.tfvars"
 - [ ] Dynamic ACM cert
 - [ ] Add safe IPs to SGs for SSH access (sgs)
 - [ ] Restrict ECS roles (iam)
-- [ ] Get NACL template working (vpc)
+- [ ] NACL template (vpc)
 
 **Articles of note:**
 - [Terraform Dynamic Subnets](https://medium.com/prodopsio/terraform-aws-dynamic-subnets-455619dd1977)

@@ -39,7 +39,8 @@ module "data" {
 
 locals {
   project_name = "catalog-api"
-  resource_prefix = "${var.env}-${random_string.env_id.result}-${local.project_name}"
+  # resource_prefix = "${var.env}-${random_string.env_id.result}-${local.project_name}"
+  resource_prefix = "${var.env}-${local.project_name}"
   max_capacity = var.env == "prod" ? 4 : 2
   min_capacity = var.env == "prod" ? 2 : 1
 }
