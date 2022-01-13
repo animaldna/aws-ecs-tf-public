@@ -22,6 +22,7 @@ resource "aws_lb_target_group" "service_target_group" {
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
+  deregistration_delay = 90
 }
 
 resource "aws_lb_listener" "alb_80_listener" {
