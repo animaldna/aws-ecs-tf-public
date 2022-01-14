@@ -2,7 +2,7 @@
 
 
 # API Infrastructure - ECS & Terraform
-This is a Terraform project to manage the infrastructure for a [demo catalog API.](https://github.com/animaldna/catalog-api)
+This project manages the infrastructure for a [demo catalog API](https://github.com/animaldna/catalog-api) with Terraform.
 
 This version runs ECS from public subnets and relies on an ALB + security groups to control access. It's less secure, but cheaper than running a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) (or NAT instance).
 
@@ -11,17 +11,21 @@ This version runs ECS from public subnets and relies on an ALB + security groups
 ![Public ECS architecture](./assets/catalog_api_infra_public.jpg)
 
 ## Additional Info
-This setup isn't *fully* managed by Terraform. Managing backend config resources (S3 + DynamoDB) in the same TF project proved problematic, so those were created manually and are passed to TF.
-
-The Route 53 hosted zone was also created outside of Terraform. Most domains are already registered and setup when a new service is created, as was the case with mine.
+This setup isn't *fully* managed by Terraform. Managing backend config resources (S3 + DynamoDB) in the same TF project proved problematic, so those were created manually and are passed to TF. The Route 53 hosted zone was also created outside of Terraform.
 
 **This project is meant to manage infrastructure only, NOT application deployment.** 
 
-The `image` variable is technically meant to be a placeholder, as a deploy script handles task definition updates outside of Terraform. <!--[You can read more about this setup here ]()(coming soon).--> The default right now is a public sleep container. Pass something meaningful when launching, otherwise you'll get 503 errors from the load balancer.
+The `image` variable is technically meant to be a placeholder, as deployments are handled outside of Terraform in the app's [CircleCI pipeline.](https://github.com/animaldna/catalog-api/blob/master/.circleci/config.yml) <!--[You can read more about this setup here ]()(coming soon).--> The default right now is a public sleep container. Pass something meaningful when launching, otherwise you'll get 503 errors from the load balancer.
 
 
 ## CI/CD Pipeline
-TBD
+There are two workflows in the CircleCI pipeline currently. `deploy_tagged` deploys tagged commits only and includes a full stage build and approval process. 
+
+![deploy_tagged workflow](./assets/cci_deploy_tagged.jpg)
+
+`deploy_untagged` skips the stage build and requires no approvals.
+
+![deploy_untagged workflow](./assets/cci_deploy_untagged.jpg)
 
 ## Requirements
 - Terraform v1.1.2
@@ -73,7 +77,7 @@ terraform destroy -var-file"dev.tfvars"
 - [ ] Slack approvals
 - [ ] Slack notifications for build fail/success
 - [ ] Add tflint job
-- [ ] Add CI workflow diagram
+- [x] Add CI workflow diagram
 - [ ] Fix issue with using dev context
 - [ ] Optional job for stage branch only
 - [ ] Optional job for dev branch only
@@ -96,7 +100,6 @@ terraform destroy -var-file"dev.tfvars"
 
 **Things I might eventually test:**
 - Maybe replace destroy checkout with more specific persistence
-- Need to persist workspace after apply?
 - Save tfplans to S3
 
 ## Author
