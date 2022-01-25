@@ -86,6 +86,7 @@ terraform destroy -var-file"dev.tfvars"
 - [x] Container logging (ecs)
 - [x] Auto scaling
 - [x] Sort out separation of environments and state management
+- [ ] Switch to private sub + VPC endpoints
 - [ ] Load testing
 - [ ] Dynamic ports (ecs)
 - [ ] Dynamic ACM cert
