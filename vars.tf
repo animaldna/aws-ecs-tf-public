@@ -43,7 +43,7 @@ variable "safe_ips" {
   type        = list(string)
   description = "IP ranges to whitelist for SSH access"
   default     = []
-  sensitive = true
+  sensitive   = true
 }
 
 
@@ -68,7 +68,7 @@ variable "vpc_cidr" {
 }
 
 variable "default_image" {
-  type = string
+  type        = string
   description = "default container definition image"
-  default = "animaldna/sleep:latest"
+  default     = "animaldna/sleep:latest"
 }

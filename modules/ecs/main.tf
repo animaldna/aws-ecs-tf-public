@@ -49,10 +49,6 @@ resource "aws_ecs_cluster" "cluster" {
     name  = "containerInsights"
     value = var.env == "prod" ? "enabled" : "disabled"
   }
-  # TODO: set up logging
-  # tags {
-  #   network = "public"
-  # }
 }
 
 resource "aws_ecs_service" "service" {
@@ -71,12 +67,16 @@ resource "aws_ecs_service" "service" {
   }
   # TODO: port should be dynamic
   network_configuration {
-    subnets          = var.public_subnets
+    subnets          = var.private_subnets
     security_groups  = var.security_groups
     assign_public_ip = true
   }
   task_definition = aws_ecs_task_definition.task-template.arn
   lifecycle {
     ignore_changes = [task_definition, desired_count]
+  }
+
+  tags = {
+    tier = "private"
   }
 }

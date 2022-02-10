@@ -5,3 +5,7 @@ output "alb_public_sg" {
 output "ecs_protected_sg" {
   value = module.ecs_protected_sg.security_group_id
 }
+
+output "endpoints_sg" {
+  value = module.vpc_endpoints_sg.security_group_id
+}

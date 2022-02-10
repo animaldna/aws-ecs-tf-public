@@ -14,7 +14,7 @@ variable "alb_target_group" {
   type = string
 }
 
-variable "public_subnets" {
+variable "private_subnets" {
   type = list(string)
 }
 
@@ -31,7 +31,7 @@ variable "region" {
 }
 
 variable "default_image" {
-  type = string
+  type        = string
   description = "default container definition image"
-  default = "animaldna/sleep:latest"
+  default     = "animaldna/sleep:latest"
 }

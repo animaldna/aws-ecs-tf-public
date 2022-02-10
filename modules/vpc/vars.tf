@@ -1,3 +1,7 @@
+variable "region" {
+  type = string
+}
+
 variable "vpc_cidr" {
   type        = string
   description = "CIDR block range for environment VPC"

@@ -1,3 +1,8 @@
+data "aws_ip_ranges" "gateway_cidr_ranges" {
+  regions  = [var.region]
+  services = ["s3", "dynamodb"]
+}
+
 locals {
   private_subnets = [
     for i, az in var.azs :
@@ -33,7 +38,7 @@ locals {
       cidr_block  = "0.0.0.0/0"
     }
   ]
-  public_inbound_ssh = [
+  inbound_ssh = [
     for i, ip in var.safe_ips :
     {
       rule_number = 103 + i
@@ -44,7 +49,19 @@ locals {
       cidr_block  = ip
     }
   ]
+  inbound_aws_ips = [
+    for i, ip in data.aws_ip_ranges.gateway_cidr_ranges.cidr_blocks :
+    {
+      rule_number = 200 + i
+      rule_action = "allow"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_block  = ip
+    }
+  ]
 }
+
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -62,16 +79,29 @@ module "vpc" {
     {
       rule_number = 100
       rule_action = "allow"
-      from_port   = 1024
+      from_port   = 0
       to_port     = 65535
       protocol    = "tcp"
       cidr_block  = "0.0.0.0/0"
     }
   ]
   public_dedicated_network_acl = true
-  # @TODO - FIX THIS
-  # private_inbound_acl_rules    = templatefile("${path.module}/templates/public_in_nacl.tfpl", { safe_ips = var.safe_ips })
-  public_inbound_acl_rules = concat(local.public_inbound_http, local.public_inbound_ssh)
+
+  private_inbound_acl_rules = concat(
+    local.inbound_ssh,
+    local.inbound_aws_ips,
+    [{
+      rule_number = 300
+      rule_action = "allow"
+      from_port   = 0
+      to_port     = 65535
+      protocol    = "tcp"
+      cidr_block  = var.vpc_cidr
+    }]
+  )
+  public_inbound_acl_rules = concat(
+    local.public_inbound_http,
+  local.inbound_ssh)
   public_outbound_acl_rules = [
     {
       rule_number = 100
