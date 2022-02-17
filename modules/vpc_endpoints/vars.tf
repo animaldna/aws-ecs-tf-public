@@ -19,10 +19,18 @@ variable "i_endpoints" {
   default     = ["ecr.api", "ecr.dkr", "logs", "elasticloadbalancing"]
 }
 
-variable "public_subnets" {
+# variable "public_subnets" {
+#   type = list(string)
+# }
+
+# variable "private_subnets" {
+#   type = list(string)
+# }
+
+variable "private_rts" {
   type = list(string)
 }
 
-variable "private_subnets" {
+variable "public_rts" {
   type = list(string)
 }

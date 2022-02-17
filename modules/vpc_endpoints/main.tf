@@ -1,6 +1,11 @@
-data "aws_route_tables" "routes" {
-  vpc_id = var.vpc_id
+# data "aws_route_tables" "routes" {
+#   vpc_id = var.vpc_id
+# }
+
+locals {
+  route_table_ids = concat(var.public_rts, var.private_rts)
 }
+
 
 resource "aws_vpc_endpoint" "s3" {
   vpc_id       = var.vpc_id
@@ -13,16 +18,16 @@ resource "aws_vpc_endpoint" "ddb" {
 }
 
 resource "aws_vpc_endpoint_route_table_association" "s3-pl" {
-  for_each = toset(data.aws_route_tables.routes.ids)
+  count = length(local.route_table_ids)
 
-  route_table_id  = each.key
+  route_table_id  = local.route_table_ids[count.index]
   vpc_endpoint_id = aws_vpc_endpoint.s3.id
 }
 
 resource "aws_vpc_endpoint_route_table_association" "ddb-pl" {
-  for_each = toset(data.aws_route_tables.routes.ids)
+  count = length(local.route_table_ids)
 
-  route_table_id  = each.key
+  route_table_id  = local.route_table_ids[count.index]
   vpc_endpoint_id = aws_vpc_endpoint.ddb.id
 }
 

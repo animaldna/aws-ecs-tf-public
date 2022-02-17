@@ -16,21 +16,21 @@ provider "aws" {
   region = var.aws_region
   default_tags {
     tags = {
-      env     = var.env
-      env_id  = random_string.env_id.result
+      env = var.env
+      # env_id  = random_string.env_id.result
       project = local.project_name
       foo     = "bar"
     }
   }
 }
 
-resource "random_string" "env_id" {
-  length  = 5
-  special = false
-  number  = true
-  lower   = true
-  upper   = false
-}
+# resource "random_string" "env_id" {
+#   length  = 5
+#   special = false
+#   number  = true
+#   lower   = true
+#   upper   = false
+# }
 
 module "data" {
   source      = "./modules/data"
@@ -56,13 +56,16 @@ module "vpc" {
 }
 
 module "vpc_endpoints" {
-  source          = "./modules/vpc_endpoints"
-  region          = var.aws_region
-  vpc_id          = module.vpc.vpc_id
-  endpoints_sg    = module.security_groups.endpoints_sg
-  i_endpoints     = local.i_endpoints
-  public_subnets  = module.vpc.public_subnets
-  private_subnets = module.vpc.private_subnets
+  source       = "./modules/vpc_endpoints"
+  region       = var.aws_region
+  vpc_id       = module.vpc.vpc_id
+  endpoints_sg = module.security_groups.endpoints_sg
+  i_endpoints  = local.i_endpoints
+  # public_subnets  = module.vpc.public_subnets
+  # private_subnets = module.vpc.private_subnets
+  private_rts = module.vpc.private_rts
+  public_rts  = module.vpc.public_rts
+  depends_on  = [module.vpc]
 }
 
 module "security_groups" {
